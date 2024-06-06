@@ -18,12 +18,19 @@ class BasicMessage:
 
     def encode(self) -> bytes:
         packed = b''.join(element.encode() for element in self.elements.values())
-        length = self.calc_message_length(packed)
+        length = self.encode_message_length(packed)
 
         return length + packed
 
     def decode(self, data):
-        pass
+        length, offset = self.decode_message_length(data)
+
+        for element in self.elements:
+            ...
+
+    def _decode_single_element(self):
+        ...
+
 
     def _element_init(self, element):
         name = element['name']
@@ -48,8 +55,18 @@ class BasicMessage:
         return cls
 
     @classmethod
-    def calc_message_length(cls, data):
+    def encode_message_length(cls, data):
         length = len(data)
         encoded_length = cls.length_encoder.encode(length)
 
         return encoded_length
+
+    @classmethod
+    def decode_message_length(cls, data, offset=0):
+        value, offset = cls.length_encoder.decode(data, offset)
+        return value, offset
+
+
+
+
+
