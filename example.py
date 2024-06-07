@@ -1,4 +1,4 @@
-from serializer.message import BasicMessage
+from serializer.messages import BasicMessage
 from protos import example_proto
 
 
