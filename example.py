@@ -1,27 +1,25 @@
+from pprint import pprint
 from serializer.messages import BasicMessage
-from protos import example_proto
+from proto import example_proto
 
 
-class ExampleMessage(BasicMessage):
+class Message(BasicMessage):
     proto = example_proto
 
 
 def main():
+    message_to_encode = Message()
 
-    message = ExampleMessage()
-    message['message_type'].value = 0
-    message['field_1'].value = 1
-    message['field_2'].value = 1
-    message['field_3'].value = 'Hello!'
+    message_to_encode['field_1'].value = 'Hello!'
+    message_to_encode['field_2'].value = 'Hello!'
+    message_to_encode['field_3'].value = 2
+    message_to_encode['field_4'].value = 'Hello!'
 
-    message['field_4']['subfield_1'].value = 1
-    message['field_4']['subfield_2'].value = 1
-    message['field_4']['subfield_3'].value = 'Hello2!'
-    print(message.encode())
+    print(message_to_encode.encode())
 
-
-    message_to_decode = ExampleMessage()
-    message_to_decode.decode(b'\x1a\x00\x00\x01\x01\x00\x06\x00Hello!\x0c\x00\x01\x01\x00\x07\x00Hello2!')
+    data = b'\x1c\x00\x06\x00Hello!\x06\x00Hello!\x02\x00\x02\x00\x06\x00Hello!'
+    message_to_decode = Message()
+    print(message_to_decode.decode(data))
 
 
 if __name__ == '__main__':
