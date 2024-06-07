@@ -34,5 +34,3 @@ class TestBasicField(unittest.TestCase):
             field = BasicField(encoder=encoder)
             self.assertEqual(values.expected, field.decode(values.input))
 
-    def calc_length_header(self):
-        ...

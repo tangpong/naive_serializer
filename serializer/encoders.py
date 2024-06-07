@@ -6,12 +6,12 @@ class EncoderInterface(ABC):
 
     @classmethod
     @abstractmethod
-    def encode(cls, data):
+    def encode(cls, *args, **kwargs):
         ...
 
     @classmethod
     @abstractmethod
-    def decode(cls, data):
+    def decode(cls, *args, **kwargs):
         ...
 
     @classmethod
@@ -60,8 +60,9 @@ class UTF8Encoder(EncoderInterface):
         return data.encode('utf-8')
 
     @classmethod
-    def decode(cls, data: bytes, offset=0) -> str:
-        return data[offset:].decode('utf-8')
+    def decode(cls, data: bytes, offset=0, limit: int | None = None) -> str:
+        limit = limit + offset if limit else -1
+        return data[offset:limit].decode('utf-8')
 
     @classmethod
     def calc_struct_length(cls) -> int:
