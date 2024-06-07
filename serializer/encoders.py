@@ -3,54 +3,66 @@ import struct
 
 
 class EncoderInterface(ABC):
+
+    @classmethod
     @abstractmethod
-    def encode(self, data):
+    def encode(cls, data):
         ...
 
+    @classmethod
     @abstractmethod
-    def decode(self, data):
+    def decode(cls, data):
         ...
 
+    @classmethod
     @abstractmethod
-    def calc_struct_length(self):
+    def calc_struct_length(cls):
         ...
 
 
 class CharBinaryEncoder(EncoderInterface):
-    struct_format: str = 'B'
+    __struct_format: str = 'B'
 
-    def encode(self, data: int) -> bytes:
-        return struct.pack(self.struct_format, data)
+    @classmethod
+    def encode(cls, data: int) -> bytes:
+        return struct.pack(cls.__struct_format, data)
 
-    def decode(self, buffer: bytes, offset=0) -> int:
-        return struct.unpack_from(self.struct_format, buffer, offset=offset)[0]
+    @classmethod
+    def decode(cls, data: bytes, offset=0) -> int:
+        return struct.unpack_from(cls.__struct_format, data, offset=offset)[0]
 
-    def calc_struct_length(self):
-        return struct.calcsize(self.struct_format)
+    @classmethod
+    def calc_struct_length(cls) -> int:
+        return struct.calcsize(cls.__struct_format)
 
 
 class ShortBinaryEncoder(EncoderInterface):
-    struct_format: str = 'H'
+    __struct_format: str = 'H'
 
-    def encode(self, data: int) -> bytes:
-        return struct.pack(self.struct_format, data)
+    @classmethod
+    def encode(cls, data: int) -> bytes:
+        return struct.pack(cls.__struct_format, data)
 
-    def decode(self, buffer: bytes, offset=0):
-        decoded = struct.unpack_from(self.struct_format, buffer, offset=offset)[0]
-        offset += self.calc_struct_length()
-        return decoded, offset
+    @classmethod
+    def decode(cls, data: bytes, offset=0):
+        decoded = struct.unpack_from(cls.__struct_format, data, offset=offset)[0]
+        return decoded
 
-    def calc_struct_length(self):
-        return struct.calcsize(self.struct_format)
+    @classmethod
+    def calc_struct_length(cls) -> int:
+        return struct.calcsize(cls.__struct_format)
 
 
 class UTF8Encoder(EncoderInterface):
 
-    def encode(self, data: str) -> bytes:
+    @classmethod
+    def encode(cls, data: str) -> bytes:
         return data.encode('utf-8')
 
-    def decode(self, data: bytes, offset=0) -> str:
+    @classmethod
+    def decode(cls, data: bytes, offset=0) -> str:
         return data[offset:].decode('utf-8')
 
-    def calc_struct_length(self):
-        return float('inf')
+    @classmethod
+    def calc_struct_length(cls) -> int:
+        return 0
