@@ -46,9 +46,10 @@ class UTF8Encoder(EncoderInterface):
 
     @classmethod
     def decode(cls, data: bytes, offset=0, limit: int = None):
-        limit = limit + offset if limit else -1
+        limit = limit + offset if limit else None
         dec = data[offset:limit].decode('utf-8')
-        return dec, limit
+        offset = len(data[offset:limit]) if not limit else limit
+        return dec, offset
 
     @classmethod
     def calc_struct_length(cls) -> int:

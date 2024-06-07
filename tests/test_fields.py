@@ -1,8 +1,7 @@
 import unittest
 from typing import Any
 from dataclasses import dataclass
-from serializer.fields import BasicField
-from serializer.encoders import ShortBinaryEncoder, CharBinaryEncoder, UTF8Encoder
+from serializer.fields import UTF8Field, ShortField
 
 
 @dataclass
@@ -14,23 +13,20 @@ class Values:
 class TestBasicField(unittest.TestCase):
     def test_field_encode(self):
         expected = {
-            CharBinaryEncoder: Values(input=1, expected=b'\x01'),
-            ShortBinaryEncoder: Values(input=1, expected=b'\x01\x00'),
-            UTF8Encoder: Values(input='Hello!', expected=b'\x06\x00Hello!')
+            ShortField: Values(input=1, expected=b'\x02\x00\x01\x00'),
+            UTF8Field: Values(input='Hello!', expected=b'\x06\x00Hello!')
         }
 
-        for encoder, values in expected.items():
-            field = BasicField(value=values.input, encoder=encoder)
-            self.assertEqual(values.expected, field.encode())
+        for field, values in expected.items():
+            f = field(value=values.input)
+            self.assertEqual(values.expected, f.encode())
 
     def test_field_decode(self):
         expected = {
-            CharBinaryEncoder: Values(input=b'\x01', expected=1),
-            ShortBinaryEncoder: Values(input=b'\x01\x00', expected=1),
-            UTF8Encoder: Values(input=b'\x06\x00Hello!', expected='Hello!')
+            ShortField: Values(input=b'\x02\x00\x0A\x00', expected=(10, 4)),
+            UTF8Field: Values(input=b'\x06\x00Hello!', expected=('Hello!', 8))
         }
 
-        for encoder, values in expected.items():
-            field = BasicField(encoder=encoder)
-            self.assertEqual(values.expected, field.decode(values.input))
-
+        for field, values in expected.items():
+            f = field()
+            self.assertEqual(values.expected, f.decode(values.input))

@@ -3,7 +3,7 @@ import unittest
 from dataclasses import dataclass
 from typing import Any
 
-from serializer.encoders import CharBinaryEncoder, ShortBinaryEncoder, UTF8Encoder
+from serializer.encoders import ShortBinaryEncoder, UTF8Encoder
 
 
 @dataclass
@@ -15,7 +15,6 @@ class Values:
 class TestEncoders(unittest.TestCase):
     def test_normal_encode(self):
         expected = {
-            CharBinaryEncoder: Values(input=1, expected=b'\x01'),
             ShortBinaryEncoder: Values(input=1, expected=b'\x01\x00'),
             UTF8Encoder: Values(input='Hello!', expected=b'Hello!')
         }
@@ -26,7 +25,6 @@ class TestEncoders(unittest.TestCase):
 
     def test_overflow_encode_exception(self):
         expected = {
-            CharBinaryEncoder: Values(input=(-1, 256,), expected="'B' format requires 0 <= number <= 255"),
             ShortBinaryEncoder: Values(input=(-1, 65536,), expected="'H' format requires 0 <= number <= 65535")
         }
         for encoder, values in expected.items():
@@ -36,9 +34,8 @@ class TestEncoders(unittest.TestCase):
 
     def test_normal_decode(self):
         expected = {
-            CharBinaryEncoder: Values(input=b'\x01', expected=1),
-            ShortBinaryEncoder: Values(input=b'\x01\x00', expected=1),
-            UTF8Encoder: Values(input=b'Hello!', expected='Hello!')
+            ShortBinaryEncoder: Values(input=b'\x01\x00', expected=(1, 2)),
+            UTF8Encoder: Values(input=b'Hello!', expected=('Hello!', 6))
         }
 
         for encoder, value in expected.items():
@@ -47,7 +44,6 @@ class TestEncoders(unittest.TestCase):
 
     def test_calc_struct_length(self):
         expected = {
-            CharBinaryEncoder: 1,
             ShortBinaryEncoder: 2,
             UTF8Encoder: 0
         }

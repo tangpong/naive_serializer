@@ -1,7 +1,6 @@
 from collections import OrderedDict
 
-from proto import example_proto
-from serializer.encoders import ShortBinaryEncoder, EncoderInterface
+from serializer.encoders import ShortBinaryEncoder
 
 
 class BasicMessage:
@@ -40,7 +39,6 @@ class BasicMessage:
         length, offset = self.decode_length(data, offset)
 
         for field in self.elements.values():
-            print(data, offset)
             dec_data, offset = field.decode(data, offset)
         return self.elements, offset
 
@@ -50,6 +48,3 @@ class BasicMessage:
     def decode_element(self, field, data, offset=0) -> tuple[any, int]:
         data, offset = field.decode(data, offset)
         return data, offset
-
-
-
